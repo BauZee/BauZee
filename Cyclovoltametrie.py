@@ -1,6 +1,6 @@
 from potentiostat import Potentiostat
 import matplotlib.pyplot as plt
-from gui import getcycurrentRange, getcysampleRate, getvoltMin, getvoltMax, getvoltpersecond,getshift,getnumCycle, getquietValue, getquietTime
+from View.MainGUI import getcycurrentRange, getcysampleRate, getvoltMin, getvoltMax, getvoltpersecond,getshift,getnumCycle, getquietValue, getquietTime
 
 port = "COM3"       # Serial port for potentiostat device
 datafile = 'test.txt'       # Output file for time, curr, volt data
