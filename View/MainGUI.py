@@ -3,52 +3,50 @@ from tkinter import ttk
 from idlelib.tooltip import Hovertip
 import matplotlib.pyplot as plt
 import serial as serial
-#from potentiostat import Potentiostat
+from potentiostat import Potentiostat
+from View.RodeostatView import RodeostatView, DeviceView
 
 
 class PyjamaParty(Tk):
     def __init__(self):
         super().__init__()  # Erstellung des Hauptfensters
-        self.title("Hegewald - Rodeostat")  # Title des Hauptfensters
+          # Erstellung eines "Maintabs" in root
+        self.title("PyjamaPartGUI")  # Title des Hauptfensters
         self.geometry("600x400")  # Größe des Hauptfensters
+        self.view = None
+        self.mainTab = ttk.Notebook(self)
+        self.create_tabs()
 
-        maintab = ttk.Notebook(self)  # Erstellung eines "Maintabs" in root
-        cyclo_tab = Frame(maintab)  # Erstellung des Punktes "Cyclovolt" in Maintab
-        square_tab = Frame(maintab)  # Erstellung des Punktes "Squarevolt" in Maintab
 
-        maintab.add(cyclo_tab, text="Cyclovoltametrie")  # Hinzufügen des Punktes "Cyclovoltametrie" in Maintab
-        maintab.add(square_tab,
-                    text="Squarewave-Voltametrie")  # Hinzufügen des Punktes "Squarewave-Voltametrie" in Maintab
-        maintab.grid(row=0, column=0)
+    def create_tabs(self):
+        self.mainTab.grid(row=0, column=0)
 
-        maintab.bind("<<NotebookTabChanged>>", self.tab_changed)
+        # Rodeostat
+        rodeo_tab = RodeostatView(self.mainTab)
+        self.mainTab.add(rodeo_tab, text="Rodeostat")
+
+        # Random new Device
+        device_tab = DeviceView(self.mainTab)
+        self.mainTab.add(device_tab, text="Generic Device")
+
+        # Event Binding for controller assignment
+        self.mainTab.bind("<<NotebookTabChanged>>", self.tab_changed)
 
     def tab_changed(self,event):
+        """" This methods is the event handler for changes in the main tab"""
         selected_index = event.widget.index("current")
-        tab = event.widget.tab(selected_index)
-        pass
+        self.view = event.widget.tab(selected_index)
 
 
-    def create_label(self, text, font, row, column, padx, pady):
+    def create_label(self, text, font, row, column, padx=0, pady=0):
         label = Label(self, text=text, font=font)
-        label.grid(row=row, column=column, padx=0, pady=0)
+        label.grid(row=row, column=column, padx=padx, pady=pady)
         return label
 
     def create_entry(self, width, borderwidth, row, column):
         entry = Entry(self, width=width, borderwidth=borderwidth)
         entry.grid(row=row, column=column, )
         return entry
-
-    def startMessung(self):
-        controller = VoltametrieController()
-
-
-    def stopMessung(self):
-        pass
-
-
-    def clearMessung(self):
-        pass
 
 
     def get_ports(self):
