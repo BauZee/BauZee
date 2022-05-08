@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import Tk, Frame, Label, Entry
 from tkinter import ttk
 from idlelib.tooltip import Hovertip
@@ -10,16 +11,15 @@ from View.RodeostatView import RodeostatView, DeviceView
 class PyjamaParty(Tk):
     def __init__(self):
         super().__init__()  # Erstellung des Hauptfensters
-          # Erstellung eines "Maintabs" in root
+        # Erstellung eines "Maintabs" in root
         self.title("PyjamaPartGUI")  # Title des Hauptfensters
         self.geometry("600x400")  # Größe des Hauptfensters
         self.view = None
         self.mainTab = ttk.Notebook(self)
         self.create_tabs()
 
-
     def create_tabs(self):
-        self.mainTab.grid(row=0, column=0)
+        self.mainTab.grid(row=0, column=0, sticky=tkinter.N + tkinter.S + tkinter.W + tkinter.E)
 
         # Rodeostat
         rodeo_tab = RodeostatView(self.mainTab)
@@ -29,29 +29,18 @@ class PyjamaParty(Tk):
         device_tab = DeviceView(self.mainTab)
         self.mainTab.add(device_tab, text="Generic Device")
 
+        self.mainTab.pack(fill="both", expand=1)
+
         # Event Binding for controller assignment
         self.mainTab.bind("<<NotebookTabChanged>>", self.tab_changed)
 
-    def tab_changed(self,event):
+    def tab_changed(self, event):
         """" This methods is the event handler for changes in the main tab"""
         selected_index = event.widget.index("current")
         self.view = event.widget.tab(selected_index)
 
-
-    def create_label(self, text, font, row, column, padx=0, pady=0):
-        label = Label(self, text=text, font=font)
-        label.grid(row=row, column=column, padx=padx, pady=pady)
-        return label
-
-    def create_entry(self, width, borderwidth, row, column):
-        entry = Entry(self, width=width, borderwidth=borderwidth)
-        entry.grid(row=row, column=column, )
-        return entry
-
-
     def get_ports(self):
         return [port for port, desc, hwid in sorted(serial.tools.list_ports.comports())]
-
 
 # # Labels & Entryboxes
 # ######################Cyclovoltametrie

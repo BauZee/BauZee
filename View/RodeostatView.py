@@ -1,28 +1,44 @@
 import tkinter as tk
+import tkinter.ttk
 from tkinter import ttk
+from tkinter.ttk import Label
 
-import Controller.RodeostatController
-from Controller.RodeostatController import RodeostatController
+import Controller.Rodeostat.RodeostatController
 
 
-#Basisklasse, erbt von Frame, damit wir es in der GUI wie einen Frame benutzen können
-class DeviceView(tk.Frame):
+# Basisklasse, erbt von Frame, damit wir es in der GUI wie einen Frame benutzen können
+class DeviceView(ttk.Frame):
     name = "DefaultDevice"
 
-
     def __init__(self, master):
-        super().__init__(master=master) # Constructor von Frame wird aufgerufen
+        super().__init__(master=master)  # Constructor von Frame wird aufgerufen
         self.controller = None
-        self.iterate_params()
+        self.paramframe = ttk.Frame(self)  # Container for adding parameters
+        self.paramframe.grid(row=1, column=0, columnspan=2, sticky=tk.N + tk.S + tk.W + tk.E)
+
+        self.buttonframe = ttk.Frame(self)
 
     def start_measurement(self):
-        self.controller.Start()
+        self.controller.start()
 
     def update_plot(self, event):
         pass
 
-    def iterate_params(self):
-        pass
+    def create_label(self, text, row, column, padx=5, pady=2):
+        label = Label(self.paramframe, text=text)
+        label.grid(row=row, column=column, padx=padx, pady=pady, sticky=tk.W)
+        return label
+
+    def create_entry(self, width=None, borderwidth=None, row=0, column=0):
+        entry = tk.Entry(self.paramframe, width=width, borderwidth=borderwidth)
+        entry.grid(row=row, column=column, )
+        return entry
+
+    def generate_param_element(self, paramname, value, row):
+        label = self.create_label(paramname, row, 0)
+        entrybox = self.create_entry(row=row, column=1)
+        entrybox.delete(0, tk.END)
+        entrybox.insert(0, value)
 
 
 class RodeostatView(DeviceView):
@@ -30,33 +46,46 @@ class RodeostatView(DeviceView):
         super().__init__(master)
         self.running = False
 
+        # Messverfahren
+        self.MethodDict = {"Cyclo": Controller.Rodeostat.RodeostatController.CycloController,
+                           "Squarewave": Controller.Rodeostat.RodeostatController.SquarewaveController}
 
-        #Messverfahren
-        self.MethodDict = {"Cyclo": Controller.RodeostatController.CycloController(),
-                           "Squarewave": Controller.RodeostatController.SquarewaveController()}
+        # Jede Methode hat einen Startknopf, also generieren wir den unabhängig von der Auswahl
+        self.start_button = ttk.Button(self.buttonframe, text="Start Test", command=self.start_measurement)
+        self.clear_button = ttk.Button(self.buttonframe, text="Clear Results", command=lambda: self.controller.data.clear)
 
-        #Variable für Callback
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+
+        methodframe = ttk.Frame(self)
+        methodframe.grid(row=0,column=0,columnspan=2, sticky=tk.W, padx=5,pady=10)
+
+        # Variable für Callback
+        methodlabel = Label(self, text="Measurement method:")
+
         variable = tk.StringVar(self)
-        opt = ttk.OptionMenu(self, variable, list(self.MethodDict.keys())[0], *self.MethodDict.keys(),
-                             command=lambda var: self.on_method_changed(var))
-        opt.grid(row=0, column=0)
+        self.method_menu = ttk.OptionMenu(self, variable, list(self.MethodDict.keys())[0], *self.MethodDict.keys(),
+                                  command=lambda var: self.on_method_changed(var))
 
-    def iterate_params(self):
-        for column, para in enumerate(self.controller.paramset):
-            pass
+        methodlabel.pack(in_=methodframe, side=tk.LEFT)
+        self.method_menu.pack(in_=methodframe, side=tk.LEFT)
+
+
+        # Laden des default Wertes der Combobox
+        self.on_method_changed(list(self.MethodDict.keys())[0])
 
     def on_method_changed(self, variable):
-
-        #Hier machen wir was aus der Auswahl
+        # Hier machen wir was aus der Auswahl
         # A) Controller des Typs MethodenameController() erzeugen
-        self.controller = self.MethodDict[variable]
-        # B) Den Startknopf mit der Start Methode des Controllers verbinden
-        start_button = tk.Button(self, text="Start Test", command=lambda: self.controller.start_test())
+        self.controller = self.MethodDict[variable]()
+        for widget in self.paramframe.grid_slaves():
+            widget.grid_forget()
+
+        # )B Start und clear button verschieben
+        self.buttonframe.grid(row=len(self.controller.paramset.items()) + 1, column=0, sticky=tk.W,pady=20,padx =10)
+        self.start_button.pack(in_=self.buttonframe,side=tk.LEFT)
+        self.clear_button.pack(in_=self.buttonframe,side=tk.LEFT)
+
         # C) Die Parameter in GUI Elemente verwandeln
-
-
-        #Jede Methode hat einen Startknopf, also generieren wir den unabhängig von der Auswahl
-        start_button.grid(row=1, column=0)
-        clear_button = tk.Button(self, text="Clear Results", command=lambda: self.controller.data.clear())
-        clear_button.grid(row=2, column=0)
-
+        for row, (paramname, value) in enumerate(self.controller.paramset.items()):
+            self.generate_param_element(paramname, value, row + 1)
