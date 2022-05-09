@@ -17,6 +17,10 @@ class PyjamaParty(Tk):
         self.view = None
         self.mainTab = ttk.Notebook(self)
         self.create_tabs()
+        self.create_main_menu()
+
+    def create_main_menu(self):
+        pass
 
     def create_tabs(self):
         self.mainTab.grid(row=0, column=0, sticky=tkinter.N + tkinter.S + tkinter.W + tkinter.E)
@@ -28,7 +32,6 @@ class PyjamaParty(Tk):
         # Random new Device
         device_tab = DeviceView(self.mainTab)
         self.mainTab.add(device_tab, text="Generic Device")
-
         self.mainTab.pack(fill="both", expand=1)
 
         # Event Binding for controller assignment
@@ -39,8 +42,7 @@ class PyjamaParty(Tk):
         selected_index = event.widget.index("current")
         self.view = event.widget.tab(selected_index)
 
-    def get_ports(self):
-        return [port for port, desc, hwid in sorted(serial.tools.list_ports.comports())]
+
 
 # # Labels & Entryboxes
 # ######################Cyclovoltametrie

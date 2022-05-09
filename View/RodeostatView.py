@@ -19,7 +19,8 @@ class DeviceView(ttk.Frame):
         self.buttonframe = ttk.Frame(self)
 
     def start_measurement(self):
-        self.controller.start()
+        ### Stope Params in den Controller
+        self.controller.start_test()
 
     def update_plot(self, event):
         pass
@@ -29,17 +30,19 @@ class DeviceView(ttk.Frame):
         label.grid(row=row, column=column, padx=padx, pady=pady, sticky=tk.W)
         return label
 
-    def create_entry(self, width=None, borderwidth=None, row=0, column=0):
-        entry = tk.Entry(self.paramframe, width=width, borderwidth=borderwidth)
+    def create_entry(self, width=None, borderwidth=None, row=0, column=0, textvariable=None):
+        entry = tk.Entry(self.paramframe, width=width, borderwidth=borderwidth,textvariable=textvariable )
         entry.grid(row=row, column=column, )
         return entry
 
     def generate_param_element(self, paramname, value, row):
+        entry_var = tk.StringVar(name=paramname,value=value)
         label = self.create_label(paramname, row, 0)
-        entrybox = self.create_entry(row=row, column=1)
+        entrybox = self.create_entry(row=row, column=1, textvariable=entry_var)
         entrybox.delete(0, tk.END)
         entrybox.insert(0, value)
 
+        self.controller.paramset[paramname] = entry_var
 
 class RodeostatView(DeviceView):
     def __init__(self, master):
@@ -70,11 +73,11 @@ class RodeostatView(DeviceView):
         methodlabel.pack(in_=methodframe, side=tk.LEFT)
         self.method_menu.pack(in_=methodframe, side=tk.LEFT)
 
-
         # Laden des default Wertes der Combobox
         self.on_method_changed(list(self.MethodDict.keys())[0])
 
     def on_method_changed(self, variable):
+    #'''Diese Methode wird aufgerufen, wenn die Messmethode verändert wird '''
         # Hier machen wir was aus der Auswahl
         # A) Controller des Typs MethodenameController() erzeugen
         self.controller = self.MethodDict[variable]()
