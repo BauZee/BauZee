@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk
+from idlelib.tooltip import Hovertip
 from tkinter import ttk
 from tkinter.ttk import Label
 
@@ -15,7 +16,6 @@ class DeviceView(ttk.Frame):
         self.controller = None
         self.paramframe = ttk.Frame(self)  # Container for adding parameters
         self.paramframe.grid(row=1, column=0, columnspan=2, sticky=tk.N + tk.S + tk.W + tk.E)
-
         self.buttonframe = ttk.Frame(self)
 
     def start_measurement(self):
@@ -35,14 +35,10 @@ class DeviceView(ttk.Frame):
         entry.grid(row=row, column=column, )
         return entry
 
-    def generate_param_element(self, paramname, value, row):
-        entry_var = tk.StringVar(name=paramname,value=value)
-        label = self.create_label(paramname, row, 0)
-        entrybox = self.create_entry(row=row, column=1, textvariable=entry_var)
-        entrybox.delete(0, tk.END)
-        entrybox.insert(0, value)
-
-        self.controller.paramset[paramname] = entry_var
+    def generate_param_element(self,row, value, label, tooltip):
+        label = self.create_label(label, row, 0)
+        entrybox = self.create_entry(row=row, column=1, textvariable=value)
+        hovertip = Hovertip(entrybox,tooltip)
 
 class RodeostatView(DeviceView):
     def __init__(self, master):
@@ -85,10 +81,10 @@ class RodeostatView(DeviceView):
             widget.grid_forget()
 
         # )B Start und clear button verschieben
-        self.buttonframe.grid(row=len(self.controller.paramset.items()) + 1, column=0, sticky=tk.W,pady=20,padx =10)
+        self.buttonframe.grid(row=len(vars(self.controller.paramset)) + 1, column=0, sticky=tk.W,pady=20,padx =10)
         self.start_button.pack(in_=self.buttonframe,side=tk.LEFT)
         self.clear_button.pack(in_=self.buttonframe,side=tk.LEFT)
 
         # C) Die Parameter in GUI Elemente verwandeln
-        for row, (paramname, value) in enumerate(self.controller.paramset.items()):
-            self.generate_param_element(paramname, value, row + 1)
+        for row, (value, (label,tooltip)) in enumerate(self.controller.get_parameters()):
+            self.generate_param_element(row, value, label, tooltip)
