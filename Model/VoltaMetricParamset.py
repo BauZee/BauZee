@@ -16,7 +16,6 @@ class VoltametricParamset:
 class CycloParamset(VoltametricParamset):
     def __init__(self):
         super().__init__("Cyclo")
-
         self.volt_max = StringVar(value="1", name="voltmax")
         self.volt_min = StringVar(value="-1", name="voltmin")
         self.num_cycles = StringVar(value="-1", name="numcycles")
@@ -32,3 +31,4 @@ class SquareWaveParamset(VoltametricParamset):
         self.final_value = StringVar(value="-1", name="finalvalue")
         self.step_value = StringVar(value="-1", name="stepvalue")
         self.sample_window = StringVar(value="-1", name="samplewindow")
+        self.current_range = StringVar(value="1", name="currentrange")
