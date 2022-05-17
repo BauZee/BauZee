@@ -24,14 +24,12 @@ class PlotView(ttk.Frame):
         self.canvas.mpl_connect("key_press_event", self.on_key_press)
         self.toolbar = self.generate_toolbar()
 
-
-
     def animate(self):
         xar = []
         yar = []
-        for datapoint in self.datavar.get():
-                t=datapoint[0]
-                v=datapoint[1]
+        data = self.datavar.get()
+        if len(data) > 0:
+            for t, v in list(data.items()):
                 xar.append(float(t))
                 yar.append(float(v))
 
@@ -59,8 +57,6 @@ class PlotView(ttk.Frame):
         self.canvas = FigureCanvasTkAgg(self.fig, self)
         self.canvas.get_tk_widget().grid(row=0,column=0,sticky=tkinter.W)
 
-    def clear_plot(self):
-       pass
 
     def generate_toolbar(self):
         toolbar = NavigationToolbar2Tk(self.canvas, self,pack_toolbar=False)

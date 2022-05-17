@@ -22,7 +22,6 @@ class DeviceView(ttk.Frame):
         self.buttonframe = ttk.Frame(self)
 
     def start_measurement(self):
-        ### Stope Params in den Controller
         self.controller.start_test()
 
     def update_plot(self, event):
@@ -53,8 +52,8 @@ class RodeostatView(DeviceView):
                            "Squarewave": Controller.Rodeostat.RodeostatController.SquarewaveController}
 
         # Jede Methode hat einen Startknopf, also generieren wir den unabhängig von der Auswahl
-        self.start_button = ttk.Button(self.buttonframe, text="Start Test", command=self.start_measurement)
-        self.clear_button = ttk.Button(self.buttonframe, text="Clear Results", command=lambda: self.controller.data.clear)
+        self.start_button = ttk.Button(self.buttonframe, text="Start Test",command=lambda:self.controller.start_test())
+        self.clear_button = ttk.Button(self.buttonframe, text="Clear Results",command=lambda:self.controller.clear())
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -93,13 +92,13 @@ class RodeostatView(DeviceView):
     # Aufräumen vom letzten UI
         for widget in self.paramframe.grid_slaves():
             widget.grid_forget()
-        self.plotframe.clear_plot()
 
         # )B UI Anpassungen
-
         self.plotframe.grid(row=0, column=3, rowspan=len(vars(self.controller.paramset)), padx=5, pady=10,
                         sticky=tkinter.W + tkinter.E)
         self.buttonframe.grid(row=len(vars(self.controller.paramset)) + 1, column=0, sticky=tk.W,pady=20,padx =10)
+
+
         self.start_button.pack(in_=self.buttonframe,side=tk.LEFT)
         self.clear_button.pack(in_=self.buttonframe,side=tk.LEFT)
 

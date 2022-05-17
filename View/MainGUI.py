@@ -10,7 +10,7 @@ class PyjamaParty(Tk):
         super().__init__()  # Erstellung des Hauptfensters
         # Erstellung eines "Maintabs" in root
         self.title("PyjamaPartGUI")  # Title des Hauptfensters
-        self.geometry("800x500")  # Größe des Hauptfensters
+        self.geometry("1000x800")  # Größe des Hauptfensters
 
 
         self.view = None
