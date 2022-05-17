@@ -60,7 +60,9 @@ class PlotView(ttk.Frame):
         self.canvas.get_tk_widget().grid(row=0,column=0,sticky=tkinter.W)
 
     def clear_plot(self):
-       pass
+         self.axes.cla()
+         self.canvas.draw() 
+       
 
     def generate_toolbar(self):
         toolbar = NavigationToolbar2Tk(self.canvas, self,pack_toolbar=False)
