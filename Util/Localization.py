@@ -22,15 +22,19 @@ Volt_MinTip = "Der Parameter voltMin beschreibt die minimalste Spannung im Poten
 Volt_MaxTip = "Der Parameter voltMax beschreibt die maximale Spannung im Potential-Zeit-Diagramm und legt somit den Peak der Kurve fest.\n Die Amplitude resultiert aus (voltMax-voltMin)/2."
 Volt_SecondTip= "Der Parameter V/s gibt an, wie um wie viel Volt sich das Potential pro Sekunde verändert"
 Sample_WindowTip= ""
+textdateiTip = ""
+
 
 LocalizationDict = {
-    "testname": ("Test Name",testnameTip),
-    "voltmax": ("Volt Max",Volt_MaxTip),
-    "voltmin": ("Volt Min",Volt_MinTip),
-    "serialport": ("Serial Port", serialportTip),
+    "textdata": ("Text Datei", textdateiTip),
+    "serialport":("Serial Port", serialportTip),
+    "testname": ("Test Name", testnameTip),
     "quietvalue": ("Quiet Value", quietValueTip),
     "quiettime": ("Quiet Time", quietTimeTip),
     "samplerate": ("Sample Rate", sampleRateTip),
+    "curr_range": ("Current Range", currentRangeTip),
+    "voltmax": ("Volt Max",Volt_MaxTip),
+    "voltmin": ("Volt Min",Volt_MinTip),
     "startvalue": ("Start Value",startValueTip),
     "samplewindow": ("Sample Window",Sample_WindowTip),
     "finalvalue": ("Final Value",finalValueTip),
@@ -39,5 +43,4 @@ LocalizationDict = {
     "numcycles": ("Number Cycles", NumCycleTip),
     "volts": ("Volt/s", Volt_SecondTip),
     "shift": ("Shift",ShiftTip),
-    "currentrange" : ("Current Range",Current_RangeTip)
 }

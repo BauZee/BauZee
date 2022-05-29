@@ -1,7 +1,8 @@
 import tkinter
 from tkinter import Tk
 from tkinter import ttk
-
+from tkinter import Menu
+from tkinter import filedialog
 from View.RodeostatView import RodeostatView, DeviceView
 
 
@@ -10,7 +11,7 @@ class PyjamaParty(Tk):
         super().__init__()  # Erstellung des Hauptfensters
         # Erstellung eines "Maintabs" in root
         self.title("PyjamaPartGUI")  # Title des Hauptfensters
-        self.geometry("1000x800")  # Größe des Hauptfensters
+        self.geometry("1020x1980")  # Größe des Hauptfensters
 
 
         self.view = None
@@ -21,7 +22,18 @@ class PyjamaParty(Tk):
         self.configure()
 
     def create_main_menu(self):
-        pass
+        self.view = RodeostatView(self.master)
+        self.menüleiste = Menu(self)
+        self.config(menu=self.menüleiste)
+        self.file = Menu(self.menüleiste, tearoff=0)
+        self.menüleiste.add_cascade(label="File", menu=self.file)
+
+        self.file.add_command(label="Open", command = self.view.openFile)
+        self.file.add_command(label="Save")
+        self.file.add_separator()
+        self.file.add_command(label="Exit", command=quit)
+
+
 
     def create_tabs(self):
         self.mainTab.grid(row=0, column=0, sticky=tkinter.N + tkinter.E)
@@ -31,9 +43,19 @@ class PyjamaParty(Tk):
         self.mainTab.add(rodeo_tab, text="Rodeostat")
 
         # Random new Device
-        device_tab = DeviceView(self.mainTab)
-        self.mainTab.add(device_tab, text="Generic Device")
+        nano_vna = ttk.Notebook(self.mainTab)
+        self.mainTab.add(nano_vna, text="NanoVNA")
         self.mainTab.pack(fill="both", expand=1)
+
+        flui_check = ttk.Notebook(self.mainTab)
+        self.mainTab.add(flui_check, text="FluiCheck")
+        self.mainTab.pack(fill="both", expand=1)
+
+        arduino = ttk.Notebook(self.mainTab)
+        self.mainTab.add(arduino, text="Arduino")
+        self.mainTab.pack(fill="both", expand=1)
+
+
 
         # Event Binding for controller assignment
         self.mainTab.bind("<<NotebookTabChanged>>", self.tab_changed)
@@ -44,14 +66,6 @@ class PyjamaParty(Tk):
         self.view = event.widget.tab(selected_index)
 
 
-
-
-# # Befehle für den Menüleistenpunkt "File"
-# def openFile():
-#     filepath = filedialog.askopenfilename()
-#     file = open(filepath, "r")
-#     print(file.read())
-#     file.close()
 #
 #
 # def saveFile():
